@@ -11,9 +11,10 @@
     <!-- <navBar :title="title" :showLeft="back"></navBar> -->
     <van-tabs
       v-model="active"
+      sticky
       color="e57373"
       background="#f7f8f3"
-      @change="clickTab"
+      @click="onClick"
       animated
     >
       <!-- <van-tab title="1"> -->
@@ -21,7 +22,6 @@
         :title="item.title"
         v-for="(item, index) in tabList"
         :key="index"
-        :name="id"
       >
         <!-- <van-list
           v-model="loading"
@@ -70,12 +70,13 @@ export default {
         }, */
       ],
       tabList: [
-        { title: "我投放的纸条", id: 0 },
-        { title: "我抽取的纸条", id: 1 },
+        { title: "我投放的纸条", name: 0 },
+        { title: "我抽取的纸条", name: 1 },
       ],
       active: 0,
       loading: false,
       finished: false,
+      isZero: true,
     };
   },
   components: { Tabbar, NavBar },
@@ -143,15 +144,8 @@ export default {
     } catch (error) {}
   },
   methods: {
-    getCqList() {
-      let openid = this.openId;
-      getCqList({ openid: openid }).then((res) => {
-        if (res.code == 200) {
-          this.list = res.data;
-        }
-      });
-    },
     getCrList() {
+      if (!this.isZero) return;
       let openid = this.openId;
       getCrList({ openid: openid }).then((res) => {
         if (res.code == 200) {
@@ -159,13 +153,28 @@ export default {
         }
       });
     },
-    clickTab(name, title) {
-      console.log(name);
-      switch (name) {
-        case 0:
-          this.getCqList();
-        case 1:
-          this.getCrList();
+    getCqList() {
+      //console.log(this.isZero);
+      if (this.isZero) return;
+      let openid = this.openId;
+      getCqList({ openid: openid }).then((res) => {
+        if (res.code == 200) {
+          this.list = res.data;
+        }
+      });
+    },
+
+    onClick(name, title) {
+      console.log(name, title);
+      this.list=[]
+      if (!name) {
+        this.isZero = true;
+        console.log(this.isZero);
+        this.getCrList();
+      } else {
+        this.isZero = false;
+        console.log(this.isZero);
+        this.getCqList();
       }
       /* this.list = [];
       this.pageNo = 0;

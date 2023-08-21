@@ -438,8 +438,6 @@ export default {
               signType,
               paySign,
             };
-            console.log(123,form)
-            return
             this.wxReadyToPay(form);
           }
           /* if (res.code == 200) {

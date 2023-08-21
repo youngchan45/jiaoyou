@@ -19,10 +19,14 @@
       </div>
       <div class="menu">
         <div @click="openShop">
-          <van-icon size="26" color="#e57373" name="send-gift-o" /><span>我要开分店</span>
+          <van-icon size="26" color="#e57373" name="send-gift-o" /><span
+            >我要开分店</span
+          >
         </div>
         <div @click="goTo">
-          <van-icon size="26" color="#e57373" name="balance-o" /><span>我的纸条</span>
+          <van-icon size="26" color="#e57373" name="balance-o" /><span
+            >我的纸条</span
+          >
         </div>
       </div>
       <!-- <img :src="posterHtmlBg"/> -->
@@ -34,11 +38,14 @@
           <!-- <img class="bg1" :src="posterHtmlBg" /> -->
           <img class="bg2" :src="qrcodeUrl" />
         </div>
-        <van-button class="btn" @click="getPrintScreen">点击截图后，长按保存</van-button>
+        <van-button class="btn" @click="getPrintScreen"
+          >点击截图后，长按保存</van-button
+        >
         <!-- <canvas id="myCanvas" @click="downLoadImage('myCanvas', 'my')" /> -->
       </van-overlay>
       <van-overlay :show="show1" @click="show1 = false">
-        <img :src="imgUrl" alt="" class="shot" /> </van-overlay>
+        <img :src="imgUrl" alt="" class="shot" />
+      </van-overlay>
       <!--  <div class="btns">
       <wx-open-launch-weapp :path="path" username="gh_593f11e49bdb">
         <script type="text/wxtag-template">
@@ -63,11 +70,12 @@
 </template>
 
 <script>
-import { getSDKConfig } from "@/api/index.js";
+import { getSDKConfig, prePay } from "@/api/index.js";
+import { mapGetters } from "vuex";
 import Tabbar from "@/components/Tabbar.vue";
 import NavBar from "@/components/navBar.vue";
-import QRCode from 'qrcode'
-import html2canvas from 'html2canvas'
+import QRCode from "qrcode";
+import html2canvas from "html2canvas";
 export default {
   name: "My",
   data() {
@@ -77,7 +85,7 @@ export default {
       title: "我的",
       back: false,
       userInfo: {
-        headimgurl: ''/* require("@/assets/image/boy.jpg") */,
+        headimgurl: "" /* require("@/assets/image/boy.jpg") */,
         nackname: "哈哈哈哈",
         vip: "1",
       },
@@ -88,7 +96,7 @@ export default {
       // 二维码的dataUrl
       qrcodeUrl: require("@/assets/image/二维码.png"),
       // 生成二维码的url
-      creatCodeUrl: 'xxxxxxxxxxxxxxxxxxxx',
+      creatCodeUrl: "xxxxxxxxxxxxxxxxxxxx",
       imgUrl: null, //截图地址
     };
   },
@@ -102,10 +110,16 @@ export default {
 
     console.log(123, this.path); */
   },
+  computed: {
+    ...mapGetters({
+      userInfo: "getUserInfo",
+      openId: "getOpenId",
+    }),
+  },
   async mounted() {
-    console.log(1111111,this.openId)
-    console.log(JSON.parse(sessionStorage.getItem('userInfo')))
-    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+    console.log(1111111, this.openId);
+    console.log(JSON.parse(sessionStorage.getItem("userInfo")));
+    this.userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
     /* this.Toast({
       message: "加载中",
       type: "loading",
@@ -140,26 +154,36 @@ export default {
       this.$router.push("/list");
     },
     openShop() {
-      this.$dialog.confirm({
-        title: "提示",
-        message: "此次开分店需支付2元，扫描分店二维码进行消费，会按照78%消费金额报答分店，二维码可往校园墙、QQ群，微信群，操场摆摊等等进行推广，若有学校为添加请联系客服进行添加。（注意:自己扫描自己二维码消费没有78%的报答奖励）",
-        confirmButtonText: "确认，支付开店",
-        confirmButtonColor: "#e57373"
-      })
+      this.$dialog
+        .confirm({
+          title: "提示",
+          message:
+            "此次开分店需支付2元，扫描分店二维码进行消费，会按照78%消费金额报答分店，二维码可往校园墙、QQ群，微信群，操场摆摊等等进行推广，若有学校为添加请联系客服进行添加。（注意:自己扫描自己二维码消费没有78%的报答奖励）",
+          confirmButtonText: "确认，支付开店",
+          confirmButtonColor: "#e57373",
+        })
         .then(() => {
           // on confirmy
-          this.showQR()
+          //this.showQR()
+          this.submit();
         })
         .catch(() => {
           // on cancel
         });
+    },
+    submit() {
+      let form = {
+        type: 4,
+        openid: this.openId,
+      };
+      prePay(form).then((res) => {});
     },
     showQR() {
       this.show = true;
     },
     async goTo1() {
       await this.createQrcode(this.creatCodeUrl);
-      await this.drawAndShareImage(this.posterHtmlBg, this.qrcodeUrl, '');
+      await this.drawAndShareImage(this.posterHtmlBg, this.qrcodeUrl, "");
     },
     //获取截图方法
     getPrintScreen() {
@@ -167,7 +191,7 @@ export default {
       html2canvas(this.$refs.content, {
         //width: 100, //截图宽度
         //height: 500, //截图高度
-        //scale: 7, 
+        //scale: 7,
         //dpi:700,
         backgroundColor: null, //画出来的图片有白色的边框,不要可设置背景为透明色（null）
         useCORS: true, //支持图片跨域
@@ -176,7 +200,7 @@ export default {
         // 把生成的base64位图片上传到服务器,生成在线图片地址
         let url = canvas.toDataURL("image/png"); // toDataURL: 图片格式转成 base64
         this.imgUrl = url;
-        this.show1 = true
+        this.show1 = true;
       });
     },
   },
@@ -261,10 +285,9 @@ export default {
   width: 100%;
 
   .bg1 {
-
     /*以下两种路径方式都可以*/
     /*background-image: url('../../../../assets/images/logo.png');*/
-    background-image: url('~@/assets/image/bg.jpg');
+    background-image: url("~@/assets/image/bg.jpg");
     background-size: 100% 100%;
     max-width: 100%;
     width: 100%;
@@ -299,6 +322,6 @@ export default {
 }
 
 .shot {
-  width: 100%
+  width: 100%;
 }
 </style>
